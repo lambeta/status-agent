@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="监控 Vercel 应用与它们依赖的 Supabase 服务。" />
+    <title>Status · status-agent</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">◉</span>
+        <span class="brand-text">
+          <span class="brand-eyebrow">status-agent</span>
+          <span class="brand-title">运行状态</span>
+        </span>
+      </div>
+      <div class="toolbar">
+        <span class="live" id="live"><span class="live-dot"></span><span id="liveText">实时监控中</span></span>
+        <button class="btn" id="refresh" type="button">立即检查</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="hero" data-status="unknown">
+        <div>
+          <p class="eyebrow">Vercel · Supabase</p>
+          <h1 id="headline">正在检查…</h1>
+          <p class="lead" id="subline">正在读取应用和 Supabase 服务状态</p>
+        </div>
+        <dl class="stats">
+          <div><dt>应用</dt><dd id="statApps">—</dd></div>
+          <div><dt>Supabase</dt><dd id="statSupabase">—</dd></div>
+          <div><dt>最后检查</dt><dd id="statChecked">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="section" aria-labelledby="appsTitle">
+        <div class="section-head">
+          <h2 id="appsTitle">应用</h2>
+          <p class="section-note">Vercel 项目按生产域名探测真实 HTTP 状态</p>
+        </div>
+        <div class="grid" id="apps"></div>
+        <p class="empty" id="appsEmpty" hidden>还没有应用。在配置里填上应用或使用 Vercel CLI 登录。</p>
+      </section>
+
+      <section class="section" aria-labelledby="supabaseTitle">
+        <div class="section-head">
+          <h2 id="supabaseTitle">Supabase</h2>
+          <p class="section-note">应用依赖的 Supabase 项目，storage 单列</p>
+        </div>
+        <div class="grid" id="supabase"></div>
+        <p class="empty" id="supabaseEmpty" hidden>还没有发现应用依赖的 Supabase 项目。</p>
+      </section>
+
+      <footer class="foot">
+        <p id="configLine">配置：—</p>
+        <p class="muted">启停通过 Vercel / Supabase API 执行；Vercel 登录态默认复用本机 CLI。</p>
+      </footer>
+    </main>
+
+    <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
+    <script src="./app.js"></script>
+  </body>
+</html>

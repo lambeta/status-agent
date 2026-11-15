@@ -1,0 +1,29 @@
+{
+  "http": {
+    "host": "127.0.0.1",
+    "port": 8787
+  },
+  "intervalMs": 30000,
+  "vercel": {
+    "token": "",
+    "teamId": ""
+  },
+  "supabase": {
+    "token": ""
+  },
+  "feishu": {
+    "larkCli": "lark-cli",
+    "chatId": "",
+    "ownerOpenId": "",
+    "replyToThread": false
+  },
+  "apps": [
+    {
+      "id": "example-app",
+      "name": "Example App",
+      "url": "https://example.vercel.app",
+      "vercelProjectId": "",
+      "supabaseRef": ""
+    }
+  ]
+}
