@@ -109,3 +109,9 @@ test('explains status terms', async () => {
   assert.match(await handleText('降级是什么意思', ctx), /4xx/);
   assert.match(await handleText('为什么会 404', ctx), /DEPLOYMENT_NOT_FOUND/);
 });
+
+test('answers about the app the user names', async () => {
+  const ctx = { snapshot };
+  assert.match(await handleText('teacher ai 还好吗', ctx), /Teacher AI · 正常/);
+  assert.doesNotMatch(await handleText('teacher ai 还好吗', ctx), /Meridian/);
+});
