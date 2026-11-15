@@ -1,8 +1,8 @@
 # status-agent
 
 A small, self-contained **ops agent** for **your Vercel projects** and the **Supabase services they
-depend on**. It watches them, answers questions in natural language, runs start/stop for you, and
-pushes an alert when something changes.
+depend on**. It answers questions in natural language, runs start/stop for you, and reports the state
+twice a day — at 12:00 and 18:00 by default — instead of streaming alerts.
 
 It is deliberately a separate project: no slides, no static-site build, no dependency on any other repo.
 
@@ -16,7 +16,8 @@ The agent design (role, perception, tools, loop, memory, safety) is in [docs/AGE
   HTTP status code and latency (a 404 such as `DEPLOYMENT_NOT_FOUND` shows up as 降级, not as "up").
 - **Supabase** — for each app, the Supabase project it talks to, with `storage`, `auth`, `rest` and
   `realtime` health. `storage` has its own status badge because that is usually the piece that breaks.
-- **Alerts** — status changes are pushed to the Feishu chat once (down, degraded, recovered).
+- **Scheduled reports** — one message at each configured time (default 12:00 and 18:00); no
+  real-time pushes. Set `intervalMs` above 0 only if you want continuous polling back.
 - **Controls** — stop/start a Vercel project (pause/unpause) and pause/restore a Supabase project.
 
 Project discovery uses the local Vercel CLI, so you do not have to paste a token. Supabase project refs
@@ -46,7 +47,8 @@ node agent.mjs                                  # dashboard on http://127.0.0.1:
 
 ```json
 {
-  "intervalMs": 30000,
+  "intervalMs": 0,
+  "report": { "times": ["12:00", "18:00"] },
   "vercel": { "scope": "my-team", "teamId": "team_xxx", "cliPath": "vercel" },
   "supabase": { "token": "" },
   "feishu": {
@@ -96,7 +98,7 @@ the answer comes from a probe, never from the model.
 | `启 <名字>` | unpause / restore |
 | `帮助` | command list |
 
-Replies are sent as the bot in the configured chat. Alerts are pushed to the same chat.
+Replies are sent as the bot in the configured chat. The daily reports go to the same chat.
 
 ## Run it forever (macOS)
 

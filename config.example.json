@@ -3,7 +3,7 @@
     "host": "127.0.0.1",
     "port": 8787
   },
-  "intervalMs": 30000,
+  "intervalMs": 0,
   "vercel": {
     "token": "",
     "teamId": ""
@@ -30,5 +30,11 @@
     "baseUrl": "https://api.deepseek.com/v1",
     "apiKey": "",
     "model": "deepseek-chat"
+  },
+  "report": {
+    "times": [
+      "12:00",
+      "18:00"
+    ]
   }
 }

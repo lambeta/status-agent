@@ -13,7 +13,6 @@ const SEVERITY = { unknown: 0, operational: 1, degraded: 2, paused: 3, down: 4 }
 const ICON = { operational: '✅', degraded: '⚠️', down: '🔴', paused: '⏸', unknown: '⚪' };
 
 let snapshot = null;
-let timer = null;
 let loading = false;
 
 function h(tag, props, ...children) {
@@ -93,9 +92,9 @@ function render() {
   renderHero();
   renderApps();
   renderSupabase();
-  const interval = snapshot && snapshot.config ? Math.round(snapshot.config.intervalMs / 1000) : null;
   $('#live').dataset.state = 'ok';
-  $('#liveText').textContent = interval ? `每 ${interval} 秒检查` : '实时监控中';
+  const times = snapshot && snapshot.config && snapshot.config.reportTimes;
+  $('#liveText').textContent = times && times.length ? `每日 ${times.join(' / ')} 汇报` : '按计划汇报';
   if (snapshot && snapshot.config) {
     const parts = [`配置：${snapshot.config.configPath}`];
     parts.push(`Vercel ${snapshot.config.hasVercelToken ? '✓' : '（用 CLI 登录态）'}`);
@@ -328,8 +327,6 @@ async function refresh() {
 
 function start() {
   load();
-  clearInterval(timer);
-  timer = setInterval(load, 5000);
 }
 
 $('#refresh').addEventListener('click', refresh);

@@ -12,8 +12,8 @@
 
 | 输入 | 来源 | 频率 |
 | --- | --- | --- |
-| 应用状态 | 服务端直接请求每个生产域名，拿到真实状态码与延迟 | 30s |
-| Supabase 服务 | `storage/v1/status`、`auth/v1/health`、`rest/v1/`、`realtime/v1/`；有 PAT 时改用 Management API 的逐服务健康 | 30s |
+| 应用状态 | 服务端直接请求每个生产域名，拿到真实状态码与延迟 | 汇报时 + 手动刷新 |
+| Supabase 服务 | `storage/v1/status`、`auth/v1/health`、`rest/v1/`、`realtime/v1/`；有 PAT 时改用 Management API 的逐服务健康 | 汇报时 + 手动刷新 |
 | 应用清单 | `vercel project ls --json`（复用本机 Vercel CLI 登录态） | 5 分钟 |
 | Supabase 归属 | 从应用自己的 JS bundle 里识别 `*.supabase.co`，可被配置覆盖 | 首次 + 缓存 |
 | 人类命令 | 飞书会话 / 看板输入框 | 随时 |
@@ -54,8 +54,9 @@
 
 ## 主动行为
 
-- 状态跃迁（→ down / degraded，或恢复）时向飞书推送一条告警；`paused` 与首次探测不告警。
-- 告警只推送变化，不重复刷屏。
+- 默认**不做实时推送**：启动时做一次基线检查，之后在配置的 `report.times`（默认 12:00 / 18:00）各汇报一次。
+- 汇报内容是当时的完整快照；看板也不再自动轮询，只在打开和点「立即检查」时更新。
+- 想要回实时模式时，把 `intervalMs` 设为大于 0 的值即可恢复轮询与状态跃迁告警。
 
 ## 安全与授权
 
