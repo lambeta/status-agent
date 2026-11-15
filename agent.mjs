@@ -10,7 +10,7 @@ import { loadConfig, assertFeishuConfig } from './lib/config.mjs';
 import { createMonitor } from './lib/monitor.mjs';
 import { startServer } from './lib/server.mjs';
 import { consumeMessages, replyMessage, sendMessage } from './lib/feishu.mjs';
-import { formatStatus } from './lib/commands.mjs';
+import { formatStatus, stripMentions } from './lib/commands.mjs';
 import { createAgent } from './lib/agent.mjs';
 import { createReporter } from './lib/schedule.mjs';
 
@@ -129,7 +129,10 @@ function startFeishu() {
       if (event.chat_id !== config.feishu.chatId) return;
       if (event.message_type && !['text', 'post'].includes(event.message_type)) return;
       if (!event.message_id || !remember(event.message_id)) return;
-      const reply = await agent.run(event.content || '');
+      const text = stripMentions(event.content || '', event.mentions);
+      if (!text) return;
+      log(`收到指令：${text}`);
+      const reply = await agent.run(text);
       if (!reply) return;
       try {
         await replyMessage(config, event.message_id, reply);

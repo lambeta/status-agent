@@ -95,3 +95,17 @@ test('understands natural phrasing in the fallback parser', () => {
   assert.deepEqual(parseCommand('把 Meridian 停掉'), { kind: 'stop', target: 'Meridian' });
   assert.deepEqual(parseCommand('将 Teacher AI 恢复'), { kind: 'start', target: 'Teacher AI' });
 });
+
+test('strips bot mentions from Feishu content', async () => {
+  const { stripMentions } = await import('../lib/commands.mjs');
+  const mentions = [{ key: '@_user_1', name: '鄢倩的飞书 CLI', id: 'ou_bot' }];
+  assert.equal(stripMentions('@鄢倩的飞书 CLI 帮助', mentions), '帮助');
+  assert.equal(stripMentions('@_user_1 状态', mentions), '状态');
+  assert.deepEqual(parseCommand(stripMentions('@鄢倩的飞书 CLI 帮助', mentions)), { kind: 'help' });
+});
+
+test('explains status terms', async () => {
+  const ctx = { snapshot };
+  assert.match(await handleText('降级是什么意思', ctx), /4xx/);
+  assert.match(await handleText('为什么会 404', ctx), /DEPLOYMENT_NOT_FOUND/);
+});
