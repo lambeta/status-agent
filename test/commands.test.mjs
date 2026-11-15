@@ -89,3 +89,9 @@ test('executes a control command and refreshes', async () => {
   assert.match(await handleText('启 Teacher AI', ctx), /已恢复/);
   assert.deepEqual(calls, [['teacher-ai', 'stop'], ['teacher-ai', 'start']]);
 });
+
+test('understands natural phrasing in the fallback parser', () => {
+  assert.deepEqual(parseCommand('Teacher AI 现在怎么样？'), { kind: 'status' });
+  assert.deepEqual(parseCommand('把 Meridian 停掉'), { kind: 'stop', target: 'Meridian' });
+  assert.deepEqual(parseCommand('将 Teacher AI 恢复'), { kind: 'start', target: 'Teacher AI' });
+});

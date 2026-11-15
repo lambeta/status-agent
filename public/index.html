@@ -55,6 +55,20 @@
         <p class="empty" id="supabaseEmpty" hidden>还没有发现应用依赖的 Supabase 项目。</p>
       </section>
 
+      <section class="section" aria-labelledby="chatTitle">
+        <div class="section-head">
+          <h2 id="chatTitle">和 Agent 说话</h2>
+          <p class="section-note" id="chatHint">自然语言：问状态、让它启停</p>
+        </div>
+        <div class="chat">
+          <ol class="chat-log" id="chatLog"></ol>
+          <form class="chat-form" id="chatForm">
+            <input id="chatInput" placeholder="例如：Teacher AI 现在怎么样？把 Meridian 停掉" autocomplete="off" />
+            <button class="btn btn-primary" type="submit">发送</button>
+          </form>
+        </div>
+      </section>
+
       <footer class="foot">
         <p id="configLine">配置：—</p>
         <p class="muted">启停通过 Vercel / Supabase API 执行；Vercel 登录态默认复用本机 CLI。</p>

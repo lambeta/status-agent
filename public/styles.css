@@ -499,6 +499,102 @@ main {
   border-color: color-mix(in srgb, var(--bad) 55%, var(--border));
 }
 
+.chat {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  overflow: hidden;
+}
+
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 1rem;
+  min-height: 5rem;
+  max-height: 22rem;
+  overflow: auto;
+  scrollbar-width: thin;
+  list-style: none;
+}
+
+.chat-log:empty::before {
+  content: "问问它：Teacher AI 现在怎么样？或者让它停掉一个项目。";
+  color: var(--faint);
+  font-size: 0.82rem;
+}
+
+.msg {
+  max-width: 46rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 0.8rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.msg.user {
+  align-self: flex-end;
+  background: color-mix(in srgb, var(--accent) 18%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+}
+
+.msg.agent {
+  align-self: flex-start;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.msg.pending {
+  color: var(--faint);
+}
+
+.msg.error {
+  border-color: color-mix(in srgb, var(--bad) 45%, var(--border));
+  color: color-mix(in srgb, var(--bad) 80%, white);
+}
+
+.chat-form {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  border-top: 1px solid var(--border);
+}
+
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.86rem;
+}
+
+.chat-form input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #04231e;
+  font-weight: 650;
+}
+
+.btn-primary:hover {
+  background: #7ff0dd;
+  border-color: #7ff0dd;
+}
+
 @media (max-width: 56rem) {
   .hero {
     grid-template-columns: 1fr;

@@ -269,6 +269,45 @@ async function control(scope, id, action, button) {
   }
 }
 
+function formatReply(text) {
+  const escaped = String(text).replace(/[&<>]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[char]);
+  return escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+
+function appendMessage(role, text, extraClass = '') {
+  const log = $('#chatLog');
+  const item = h('li', { class: `msg ${role} ${extraClass}`.trim() }, text);
+  log.append(item);
+  log.scrollTop = log.scrollHeight;
+  return item;
+}
+
+async function sendChat(event) {
+  event.preventDefault();
+  const input = $('#chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  appendMessage('user', text);
+  const pending = appendMessage('agent', '思考中…', 'pending');
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.message || `HTTP ${response.status}`);
+    pending.innerHTML = formatReply(payload.reply || '（没有回复）');
+    pending.classList.remove('pending');
+    if (payload.reply) setTimeout(load, 400);
+  } catch (error) {
+    pending.classList.remove('pending');
+    pending.classList.add('error');
+    pending.textContent = `出错了：${error.message}`;
+  }
+}
+
 async function refresh() {
   const button = $('#refresh');
   button.disabled = true;
@@ -294,4 +333,5 @@ function start() {
 }
 
 $('#refresh').addEventListener('click', refresh);
+$('#chatForm').addEventListener('submit', sendChat);
 start();

@@ -1,9 +1,12 @@
 # status-agent
 
-A small, self-contained agent that watches **your Vercel projects** and the **Supabase services they
-depend on**, then lets you check or control them from a web dashboard or a Feishu chat.
+A small, self-contained **ops agent** for **your Vercel projects** and the **Supabase services they
+depend on**. It watches them, answers questions in natural language, runs start/stop for you, and
+pushes an alert when something changes.
 
 It is deliberately a separate project: no slides, no static-site build, no dependency on any other repo.
+
+The agent design (role, perception, tools, loop, memory, safety) is in [docs/AGENT.md](docs/AGENT.md).
 
 ![dashboard](.github/dashboard.png)
 
@@ -71,6 +74,18 @@ node agent.mjs                                  # dashboard on http://127.0.0.1:
 - `feishu.chatId` / `feishu.ownerOpenId` enable the chat channel; only that person, in that chat, can
   use it.
 
+## The agent
+
+Chat with it in the dashboard or in Feishu. With an LLM configured it understands natural language and
+picks tools itself; without one it falls back to the built-in commands, so it never goes silent.
+
+```json
+"llm": { "baseUrl": "https://api.deepseek.com/v1", "apiKey": "sk-...", "model": "deepseek-chat" }
+```
+
+Any OpenAI-compatible chat-completions endpoint works. The model only chooses tools — every number in
+the answer comes from a probe, never from the model.
+
 ## Feishu commands
 
 | Command | Effect |
@@ -95,6 +110,7 @@ Copies the agent to `~/.local/share/status-agent`, writes
 
 ## How it works
 
+- `lib/agent.mjs` — the LLM tool loop (`get_status`, `refresh_status`, `control_app`, `control_supabase`)
 - `agent.mjs` — CLI, HTTP server, monitor loop, Feishu consumer
 - `lib/services.mjs` — probes and API calls (Vercel, Supabase, project discovery)
 - `lib/monitor.mjs` — merges discovered apps with the config, tracks transitions, persists last states

@@ -9,7 +9,8 @@ import { loadConfig, assertFeishuConfig } from './lib/config.mjs';
 import { createMonitor } from './lib/monitor.mjs';
 import { startServer } from './lib/server.mjs';
 import { consumeMessages, replyMessage, sendMessage } from './lib/feishu.mjs';
-import { formatStatus, handleText } from './lib/commands.mjs';
+import { formatStatus } from './lib/commands.mjs';
+import { createAgent } from './lib/agent.mjs';
 
 const args = process.argv.slice(2);
 const valueOf = (name) => {
@@ -31,6 +32,7 @@ function loadOrExit() {
 
 const config = loadOrExit();
 const monitor = createMonitor(config, { log });
+const agent = createAgent(config, monitor, { log });
 
 if (has('--check')) {
   const lines = [
@@ -51,7 +53,7 @@ if (has('--once')) {
   process.exit(0);
 }
 
-const server = startServer(config, monitor, { log });
+const server = startServer(config, monitor, { log, agent });
 let feishuStop = null;
 let timer = null;
 let stopping = false;
@@ -137,7 +139,7 @@ function startFeishu() {
       if (!event.message_id || !remember(event.message_id)) return;
       if (Date.now() - monitor.snapshot().checkedAt > 5000) await context.refresh();
       context.snapshot = monitor.snapshot();
-      const reply = await handleText(event.content || '', context);
+      const reply = await agent.run(event.content || '');
       if (!reply) return;
       try {
         await replyMessage(config, event.message_id, reply);
